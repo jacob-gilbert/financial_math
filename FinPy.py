@@ -68,6 +68,8 @@ def simp_d_to_i(d, t):
 def eir(av1, av2):
     return (av2 - av1) / av1
 
+def eir_i(av1, i, t):
+    return eir(simple_interest(av1, i, t - 1), simple_interest(av1, i, t))
 
 
  ########################################
