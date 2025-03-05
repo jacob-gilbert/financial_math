@@ -64,5 +64,11 @@ def simp_d_to_i(d, t):
     return d / (1 - d * t)
 
 
+# effective interest rate
+def eir(av1, av2):
+    return (av2 - av1) / av1
+
+
+
  ########################################
  # Compount Interest
