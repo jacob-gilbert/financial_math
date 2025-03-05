@@ -66,10 +66,16 @@ def simp_d_to_i(d, t):
 
 # effective interest rate
 def eir(av1, av2):
+    """
+    Returns the effective interest rate when given the accumulated value of one time period and the next
+    """
     return (av2 - av1) / av1
 
-def eir_i(av1, i, t):
-    return eir(simple_interest(av1, i, t - 1), simple_interest(av1, i, t))
+def eir_i(pv, i, t):
+    """
+    Returns the effective interest rate when given the present value, the simple interest rate, and the time period to take the rate
+    """
+    return eir(simple_interest(pv, i, t - 1), simple_interest(pv, i, t))
 
 
  ########################################
