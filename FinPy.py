@@ -24,3 +24,10 @@ def simple_discount_t(pv, fv, d):
 
 def simple_discount_fv(pv, d, t):
     return (pv / (1 - d * t))
+
+
+def simp_i_to_d(i, t):
+    return i / (1 + i * t)
+
+def simp_d_to_i(d, t):
+    return d / (1 - d * t)
