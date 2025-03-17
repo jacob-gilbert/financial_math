@@ -1,3 +1,5 @@
+import math
+
 ########################################
 # Simple Interest
 def simple_interest(pv, i, t):
@@ -10,7 +12,7 @@ def simple_interest_i(pv, fv, t):
     """
     Returns the simple interest rate given the present value, future value, and number of time periods
     """
-    return ((fv / pv) - 1) / t
+    return ((fv / pv) - 1) / t - 1
 
 def simple_interest_t(pv, fv, i):
     """
@@ -78,5 +80,76 @@ def eir_i(pv, i, t):
     return eir(simple_interest(pv, i, t - 1), simple_interest(pv, i, t))
 
 
- ########################################
- # Compount Interest
+########################################
+# Compount Interest
+def compound_av(pv, i, t):
+    """
+    Returns the accumulated value when given the present value, the compound interest rate, and the number of time periods
+    """
+    return pv * ((1 + i) ** t)
+
+def compound_pv(fv, i, t):
+    """
+    Returns the future value when given the accumulated value, the compound interest rate, and the number of time periods
+    """
+    return fv / ((1 + i) ** t)
+
+def compound_i(pv, fv, t):
+    """
+    Returns the compound interest rate when given the present value, accumulated value, and the number of time periods
+    """
+    return ((fv / pv) ** (1 / t)) - 1
+
+def compound_t(pv, fv, i):
+    """
+    Returns the number of time periods when given the present value, accumulated value, and the compound interest rate
+    """
+    return (math.log(fv / pv) / math.log(1 + i))
+
+
+# Present value factors for interest and discount rates
+def pvf_int(i, t):
+    """
+    returns the present value factor for a given interest rate and a number of time periods
+    """
+    return (1 / (1 + i)) ** t
+
+def pvf_dis(d, t):
+    """
+    returns the present value factor for a given discount rate and a number of time periods
+    """
+    return (1 - d) ** t
+
+
+# Future value factors for interest and discount rates
+def fvf_int(i, t):
+    """
+    returns the future value factor for a given interest rate and a number of time periods
+    """
+    return (1 + i) ** t
+
+def fvf_dis(d, t):
+    """
+    returns the future value factor for a given interest rate and a number of time periods
+    """
+    return (1 / (1 - d)) ** t
+
+# Conversions between compound interest and discount
+def comp_i_d(i):
+    """
+    returns the conversion from compound interest rate to compound discount rate
+    """
+    return 1 + pvf_int(i, 1)
+
+def comp_d_i(d):
+    """
+    returns the conversion from compound discount rate to compound interest rate
+    """
+    return (1 / (1 - d)) - 1
+
+def mthly_comp(i, i_comp_times, new_comp_times):
+    """
+    returns the conversion from our effective interest rate to mthly interest rate
+    """
+    i_eff = (1 + i / i_comp_times) ** i_comp_times - 1
+    return new_comp_times * ((1 + i_eff) ** (1 / new_comp_times) - 1)
