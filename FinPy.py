@@ -147,9 +147,36 @@ def comp_d_i(d):
     """
     return (1 / (1 - d)) - 1
 
+
+########################################
+# Mthly Interest
 def mthly_comp(i, i_comp_times, new_comp_times):
     """
     returns the conversion from our effective interest rate to mthly interest rate
     """
     i_eff = (1 + i / i_comp_times) ** i_comp_times - 1
     return new_comp_times * ((1 + i_eff) ** (1 / new_comp_times) - 1)
+
+def mthly_fv(pv, i, t, m):
+    """
+    returns the future value of an investment compounded mthly
+    """
+    return pv * ((1 + i / m) ** (t * m))
+
+def mthly_pv(fv, i, t, m):
+    """
+    returns the present value of an investment compounded mthly
+    """
+    return fv / ((1 + i / m) ** (t * m))
+
+def mthly_i(pv, fv, t, m):
+    """
+    returns the interest of an investment compounded mthly
+    """
+    return (((fv / pv) ** (1 / (m * t))) - 1) * m
+
+def mthly_t(pv, fv, i, m):
+    """
+    returns the times periods of an investment compounded mthly
+    """
+    return math.log(fv/pv) / math.log(1 + i / m)
