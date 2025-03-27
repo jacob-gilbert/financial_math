@@ -180,3 +180,60 @@ def mthly_t(pv, fv, i, m):
     returns the times periods of an investment compounded mthly
     """
     return math.log(fv/pv) / math.log(1 + i / m)
+
+
+########################################
+# Level Annuities
+def level_annuity_due_pvf(i, n):
+    return (1 - (1 + i) ** -n) / (i / (1 + i))
+
+def level_annuity_due(x, i, n):
+    return x * level_annuity_due_pvf(i, n)
+
+def level_annuity_due_pymnt_amnt(pv, i, n):
+    return pv / level_annuity_due_pvf(i, n)
+
+def level_annuity_due_num_pymnts(pv, i, x):
+    return -math.log(1 - ((i / (1 + i)) * pv) / x) / math.log(1 + i)
+
+
+def level_annuity_imm_pvf(i, n):
+    return (1 - (1 + i) ** -n) / i
+
+def level_annuity_imm(x, i, n):
+    return x * level_annuity_imm_pvf(i, n)
+
+def level_annuity_imm_pymnt_amnt(pv, i, n):
+    return pv / level_annuity_imm_pvf(i, n)
+
+def level_annuity_imm_num_pymnts(pv, i, x):
+    return -math.log(1 - (i * pv) / x) / math.log(1 + i)
+
+
+def level_annuity_cont_pvf(i, n):
+    return (1 - (1 + i) ** -n) / math.log(1 + i)
+
+def level_annuity_cont(x, i, n):
+    return x * level_annuity_cont_pvf(i, n)
+
+def level_annuity_cont_pymnt_amnt(pv, i, n):
+    return pv / level_annuity_cont_pvf(i, n)
+
+def level_annuity_cont_num_pymnts(pv, i, x):
+    return -math.log(1 - (math.log(1 + i) * pv) / x) / math.log(1 + i)
+
+########################################
+# Level Perpetuities
+def perp_due(d):
+    return 1 / d
+
+def perp_imm(i):
+    return 1 / i
+
+def perp_cont(i):
+    return 1 / math.log(1 + i)
+
+
+#print(level_annuity_due(100, 0.04, 9))
+#print(level_annuity_due_pymnt_amnt(773.2744874950405, 0.04, 9))
+#print(level_annuity_due_num_pymnts(773.2744874950405, 0.04, 100))
