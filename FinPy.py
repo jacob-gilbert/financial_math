@@ -232,8 +232,3 @@ def perp_imm(i):
 
 def perp_cont(i):
     return 1 / math.log(1 + i)
-
-
-#print(level_annuity_due(100, 0.04, 9))
-#print(level_annuity_due_pymnt_amnt(773.2744874950405, 0.04, 9))
-#print(level_annuity_due_num_pymnts(773.2744874950405, 0.04, 100))
