@@ -318,3 +318,35 @@ def dec_annuity_cont_fv(x, i, n):
 # Varying Perpetuities
 def inc_perp(i):
     return ((1 + i) ** 2) / i
+
+
+########################################
+# Geometrically Increasing Annuities
+def IGA_due(i, g, n):
+    if i == g:
+        return n
+    
+    a = (1 + g) / (1 + i)
+    return (1 - a ** n) / (1 - a)
+
+def IGA_imm(i, g, n):
+    if i == g:
+        return n / (1 + i) 
+    
+    return (1 - ((1 + g) / (1 + i)) ** n) / (i - g)
+
+
+def IGS_due(i, g, n):
+    i1 = 1 + i
+    g1 = 1 + g
+    
+    return ((i1 ** n) - (g1 ** n)) / (1 - (i1 / g1))
+
+def IGS_imm(i, g, n):
+    return ((1 + i) ** n - (1 + g) ** n) / (i - g)
+
+
+########################################
+# Geometrically Increasing Perpetuity
+def IGP(i, g):
+    return 1 / ((1 + g) / (1 + i)) 
