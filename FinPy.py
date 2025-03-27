@@ -52,6 +52,7 @@ def simple_discount_fv(pv, d, t):
     """
     return (pv / (1 - d * t))
 
+
 # Conversions simple interest <--> simple discount
 def simp_i_to_d(i, t):
     """
@@ -133,6 +134,7 @@ def fvf_dis(d, t):
     returns the future value factor for a given interest rate and a number of time periods
     """
     return (1 / (1 - d)) ** t
+
 
 # Conversions between compound interest and discount
 def comp_i_d(i):
@@ -261,6 +263,7 @@ def level_annuity_cont_pymnt_amnt_fv(fv, i, n):
 def level_annuity_cont_num_pymnts_fv(fv, i, x):
     return math.log(1 + (i * fv) / x) / math.log(1 + i)
 
+
 ########################################
 # Level Perpetuities
 def perp_due(d):
@@ -313,6 +316,7 @@ def dec_annuity_imm_fv(x, i, n):
 
 def dec_annuity_cont_fv(x, i, n):
     return x * (n * (1 + i) ** n - level_annuity_imm_fvf(i, n)) / math.log(1 + i)
+
 
 ########################################
 # Varying Perpetuities
