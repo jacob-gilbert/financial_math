@@ -187,20 +187,33 @@ def mthly_t(pv, fv, i, m):
 def level_annuity_due_pvf(i, n):
     return (1 - (1 + i) ** -n) / (i / (1 + i))
 
-def level_annuity_due(x, i, n):
+def level_annuity_due_pv(x, i, n):
     return x * level_annuity_due_pvf(i, n)
 
-def level_annuity_due_pymnt_amnt(pv, i, n):
+def level_annuity_due_pymnt_amnt_pv(pv, i, n):
     return pv / level_annuity_due_pvf(i, n)
 
-def level_annuity_due_num_pymnts(pv, i, x):
+def level_annuity_due_num_pymnts_pv(pv, i, x):
     return -math.log(1 - ((i / (1 + i)) * pv) / x) / math.log(1 + i)
+
+
+def level_annuity_due_fvf(i, n):
+    return ((1 + i) ** n) / (i / (i + 1))
+
+def level_annuity_due_fv(x, i, n):
+    return x * level_annuity_due_fvf(i, n)
+
+def level_annuity_due_pymnt_amnt_fv(fv, i, n):
+    return fv / level_annuity_due_fvf(i, n)
+
+def level_annuity_due_num_pymnts_fv(fv, i, x):
+    return math.log(1 + ((i / (1 + i)) * fv) / x) / math.log(1 + i)
 
 
 def level_annuity_imm_pvf(i, n):
     return (1 - (1 + i) ** -n) / i
 
-def level_annuity_imm(x, i, n):
+def level_annuity_imm_pv(x, i, n):
     return x * level_annuity_imm_pvf(i, n)
 
 def level_annuity_imm_pymnt_amnt(pv, i, n):
@@ -210,10 +223,23 @@ def level_annuity_imm_num_pymnts(pv, i, x):
     return -math.log(1 - (i * pv) / x) / math.log(1 + i)
 
 
+def level_annuity_imm_fvf(i, n):
+    return ((1 + i) ** n) / i
+
+def level_annuity_imm_fv(x, i, n):
+    return x * level_annuity_imm_fvf(i, n)
+
+def level_annuity_imm_pymnt_amnt_fv(fv, i, n):
+    return fv / level_annuity_imm_fvf(i, n)
+
+def level_annuity_imm_num_pymnts_fv(fv, i, x):
+    return math.log(1 + (i * fv) / x) / math.log(1 + i)
+
+
 def level_annuity_cont_pvf(i, n):
     return (1 - (1 + i) ** -n) / math.log(1 + i)
 
-def level_annuity_cont(x, i, n):
+def level_annuity_cont_pv(x, i, n):
     return x * level_annuity_cont_pvf(i, n)
 
 def level_annuity_cont_pymnt_amnt(pv, i, n):
@@ -221,6 +247,19 @@ def level_annuity_cont_pymnt_amnt(pv, i, n):
 
 def level_annuity_cont_num_pymnts(pv, i, x):
     return -math.log(1 - (math.log(1 + i) * pv) / x) / math.log(1 + i)
+
+
+def level_annuity_cont_fvf(i, n):
+    return ((1 + i) ** n) / i
+
+def level_annuity_cont_fv(x, i, n):
+    return x * level_annuity_cont_fvf(i, n)
+
+def level_annuity_cont_pymnt_amnt_fv(fv, i, n):
+    return fv / level_annuity_cont_fvf(i, n)
+
+def level_annuity_cont_num_pymnts_fv(fv, i, x):
+    return math.log(1 + (i * fv) / x) / math.log(1 + i)
 
 ########################################
 # Level Perpetuities
@@ -232,3 +271,45 @@ def perp_imm(i):
 
 def perp_cont(i):
     return 1 / math.log(1 + i)
+
+
+########################################
+# Varying Annuities
+def inc_annuity_due_pv(x, i, n):
+    return x * (level_annuity_due_pvf(i, n) - n * ((1 + i) ** -n)) / (i / (1 + i))
+
+def inc_annuity_imm_pv(x, i, n):
+    return x * (level_annuity_due_pvf(i, n) - n * ((1 + i) ** -n)) / i
+
+def inc_annuity_cont_pv(x, i, n):
+    return x * (level_annuity_due_pvf(i, n) - n * ((1 + i) ** -n)) / math.log(1 + i)
+
+
+def inc_annuity_due_fv(x, i, n):
+    return x * (level_annuity_due_fvf(i, n) - n) / (i / (1 + i))
+
+def inc_annuity_imm_fv(x, i, n):
+    return x * (level_annuity_due_fvf(i, n) - n) / i
+
+def inc_annuity_cont_fv(x, i, n):
+    return x * (level_annuity_due_fvf(i, n) - n) / math.log(1 + i)
+
+
+def dec_annuity_due_pv(x, i, n):
+    return x * (n - level_annuity_imm_pvf(i, n)) / (i / (1 + i))
+
+def dec_annuity_imm_pv(x, i, n):
+    return x * (n - level_annuity_imm_pvf(i, n)) / i
+
+def dec_annuity_cont_pv(x, i, n):
+    return x * (n - level_annuity_imm_pvf(i, n)) / math.log(1 + i)
+
+
+def dec_annuity_due_fv(x, i, n):
+    return x * (n * (1 + i) ** n - level_annuity_imm_fvf(i, n)) / (i / (1 + i))
+
+def dec_annuity_imm_fv(x, i, n):
+    return x * (n * (1 + i) ** n - level_annuity_imm_fvf(i, n)) / i
+
+def dec_annuity_cont_fv(x, i, n):
+    return x * (n * (1 + i) ** n - level_annuity_imm_fvf(i, n)) / math.log(1 + i)
