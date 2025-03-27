@@ -313,3 +313,8 @@ def dec_annuity_imm_fv(x, i, n):
 
 def dec_annuity_cont_fv(x, i, n):
     return x * (n * (1 + i) ** n - level_annuity_imm_fvf(i, n)) / math.log(1 + i)
+
+########################################
+# Varying Perpetuities
+def inc_perp(i):
+    return ((1 + i) ** 2) / i
