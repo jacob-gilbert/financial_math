@@ -16,11 +16,12 @@ class MainWindow(QMainWindow):
         # create label, button and text boxes to for loan information
         loan_label = QLabel()
         loan_label.setText("Input Loan Information Below:")
-        self.grid.addWidget(loan_label, 2, 0)
+        loan_label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.grid.addWidget(loan_label, 5, 0)
 
         loan_button = QPushButton()
         loan_button.setText("Create Graph")
-        self.grid.addWidget(loan_button, 4, 0)
+        self.grid.addWidget(loan_button, 7, 0)
 
         loan_prin = QLineEdit()
         loan_prin.setPlaceholderText("Principal")
@@ -45,12 +46,14 @@ class MainWindow(QMainWindow):
         loan_info_layout.addWidget(loan_time)
 
         loan_container.setLayout(loan_info_layout)
-        self.grid.addWidget(loan_container, 3, 0)
+        self.grid.addWidget(loan_container, 6, 0)
 
         # create the graph
         self.graph = PlotWidget()
-        self.grid.addWidget(self.graph, 0, 0, 2, 3)
+        self.grid.addWidget(self.graph, 0, 0, 5, 3)
 
+        self.grid.setSpacing(5)
+        self.grid.setVerticalSpacing(0)
         self.setCentralWidget(container)
 
 
