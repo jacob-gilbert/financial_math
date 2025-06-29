@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QGridLayout, QLabel, QPushButton, QLineEdit, QSizePolicy, QHBoxLayout
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+import FinPy as fp
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -24,7 +25,7 @@ class MainWindow(QMainWindow):
         self.grid.addWidget(loan_button, 2, 0)
 
         # connect button to function
-        loan_button.clicked.connect(lambda: self.on_loan_button_clicked(loan_prin.text(), loan_int.text(), loan_time.text()))
+        loan_button.clicked.connect(lambda: self.on_loan_button_clicked(loan_prin.text(), loan_int.text(), loan_pymnts.text()))
 
         loan_prin = QLineEdit()
         loan_prin.setPlaceholderText("Principal")
@@ -34,9 +35,9 @@ class MainWindow(QMainWindow):
         loan_int.setPlaceholderText("Interest")
         loan_int.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
 
-        loan_time = QLineEdit()
-        loan_time.setPlaceholderText("Time")
-        loan_time.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        loan_pymnts = QLineEdit()
+        loan_pymnts.setPlaceholderText("Number of Payments")
+        loan_pymnts.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
 
         # create layout for loan info
         loan_container = QWidget()
@@ -46,7 +47,7 @@ class MainWindow(QMainWindow):
         loan_info_layout.setSpacing(5)
         loan_info_layout.addWidget(loan_prin)
         loan_info_layout.addWidget(loan_int)
-        loan_info_layout.addWidget(loan_time)
+        loan_info_layout.addWidget(loan_pymnts)
 
         loan_container.setLayout(loan_info_layout)
         self.grid.addWidget(loan_container, 1, 0)
@@ -56,22 +57,39 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(container)
 
 
-    def on_loan_button_clicked(self, amount, interest, time):
-        self.plot_window = PlotWidget(amount, interest, time)
-        self.plot_window.show()
+    def on_loan_button_clicked(self, amount, interest, pymnts):
+        if amount != "" and interest != "" and pymnts != "":
+            if float(amount) > 0 and float(interest) > 0 and int(pymnts) > 0:
+                try:
+                    float(amount)
+                    float(interest)
+                    int(pymnts)
+                    self.plot_window = PlotWidget(float(amount), float(interest), int(pymnts))
+                    self.plot_window.show()
+                except ValueError:
+                    print("Error: At least one of the inputs was not a valid number")
+            else:
+                print("Error: At least one of the inputs was not a positive number")
+        else:
+            print("Error: At least one of the required inputs was left blank")
 
 
 class PlotWidget(QMainWindow):
-    def __init__(self, amount, interest, time):
+    def __init__(self, amount, interest, pymnts):
         super().__init__()
+
+        self.amount = amount
+        self.interest = (interest / 100) / 12
+        self.payments = pymnts
 
         # Layout
         container = QWidget()
         grid = QGridLayout()
 
-        """temp_label = QLabel()
-        temp_label.setText(f"Amount: {amount}, Interest: {interest}, Time {time}")
-        grid.addWidget(temp_label)"""
+        total_label = QLabel()
+        self.mthly_pymnts = determine_mthly_pymnt(amount, (interest / 12) / 100, pymnts)
+        total_label.setText(f"Each payment is ${self.mthly_pymnts} and there are {pymnts} payments \nfor a total of ${self.mthly_pymnts * pymnts}")
+        grid.addWidget(total_label)
 
         # create a canvas and add it to the layout
         self.canvas = FigureCanvas(Figure(figsize=(5,3)))
@@ -84,16 +102,36 @@ class PlotWidget(QMainWindow):
         self.plot()
 
     def plot(self):
-        ax = self.canvas.figure.add_subplot(111)
-        ax.plot([0, 1, 2, 3], [10, 1, 20, 3], marker="o")
+        ax = self.canvas.figure.add_subplot(111)\
+
+        curr_balance = self.amount
+        balance_ot = [curr_balance]
+        total_interest = 0
+        for i in range(self.payments):
+            interest = curr_balance * self.interest
+            total_interest += interest
+
+            curr_balance = curr_balance + interest - self.mthly_pymnts
+            balance_ot.append(curr_balance)
+
+        #ax.plot(balance_ot, [i for i in range(self.payments + 1)], marker="o")
+        ax.plot([i for i in range(self.payments + 1)], balance_ot, marker="o")
         ax.set_title("Sample Plot")
-        ax.set_xlabel("Years")
+        ax.set_xlabel("Months")
         ax.set_ylabel("Total Amount")
+
+
+# uses the monthly payments formula to computer the amount needed to pay per month
+# formula M = [Po * r * (1 + r)^n] / [(1 + r)^n - 1]
+def determine_mthly_pymnt(principal, interest, num_payments):
+    fvf = (1 + interest) ** num_payments
+    numerator = principal * interest * fvf
+    denominator = fvf - 1
+    return round(numerator / denominator, 2)
 
 
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()
-
     window.show()
     app.exec()
