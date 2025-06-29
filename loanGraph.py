@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         self.grid.addWidget(loan_button, 2, 0)
 
         # connect button to function
-        loan_button.clicked.connect(lambda: self.on_loan_button_clicked(loan_prin.text(), loan_int.text(), loan_pymnts.text()))
+        loan_button.clicked.connect(lambda: self.on_loan_button_clicked(loan_prin.text(), loan_int.text(), loan_pymnts.text(), loan_start.text()))
 
         loan_prin = QLineEdit()
         loan_prin.setPlaceholderText("Principal")
@@ -39,15 +39,20 @@ class MainWindow(QMainWindow):
         loan_pymnts.setPlaceholderText("Number of Payments")
         loan_pymnts.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
 
+        loan_start = QLineEdit()
+        loan_start.setPlaceholderText("Months until start")
+        loan_start.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+
         # create layout for loan info
         loan_container = QWidget()
 
-        loan_info_layout = QHBoxLayout()
+        loan_info_layout = QGridLayout()
         loan_info_layout.setContentsMargins(0,0,0,0)
         loan_info_layout.setSpacing(5)
-        loan_info_layout.addWidget(loan_prin)
-        loan_info_layout.addWidget(loan_int)
-        loan_info_layout.addWidget(loan_pymnts)
+        loan_info_layout.addWidget(loan_prin, 0, 0)
+        loan_info_layout.addWidget(loan_int, 0, 1)
+        loan_info_layout.addWidget(loan_pymnts, 1, 0)
+        loan_info_layout.addWidget(loan_start, 1, 1)
 
         loan_container.setLayout(loan_info_layout)
         self.grid.addWidget(loan_container, 1, 0)
@@ -57,14 +62,16 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(container)
 
 
-    def on_loan_button_clicked(self, amount, interest, pymnts):
+    def on_loan_button_clicked(self, amount, interest, pymnts, start):
+        if start == "":
+            start = "0"
         if amount != "" and interest != "" and pymnts != "":
-            if float(amount) > 0 and float(interest) > 0 and int(pymnts) > 0:
+            if float(amount) > 0 and float(interest) > 0 and int(pymnts) > 0 and int(start) >= 0:
                 try:
                     float(amount)
                     float(interest)
                     int(pymnts)
-                    self.plot_window = PlotWidget(float(amount), float(interest), int(pymnts))
+                    self.plot_window = PlotWidget(float(amount), float(interest), int(pymnts), int(start))
                     self.plot_window.show()
                 except ValueError:
                     print("Error: At least one of the inputs was not a valid number")
@@ -75,19 +82,20 @@ class MainWindow(QMainWindow):
 
 
 class PlotWidget(QMainWindow):
-    def __init__(self, amount, interest, pymnts):
+    def __init__(self, amount, interest, pymnts, start):
         super().__init__()
 
         self.amount = amount
         self.interest = (interest / 100) / 12
         self.payments = pymnts
+        self.start = start
 
         # Layout
         container = QWidget()
         grid = QGridLayout()
 
         total_label = QLabel()
-        self.mthly_pymnts = determine_mthly_pymnt(amount, (interest / 12) / 100, pymnts)
+        self.mthly_pymnts = determine_mthly_pymnt(amount, (interest / 12) / 100, pymnts, start)
         total_label.setText(f"Each payment is ${self.mthly_pymnts} and there are {pymnts} payments \nfor a total of ${self.mthly_pymnts * pymnts}")
         grid.addWidget(total_label)
 
@@ -123,9 +131,12 @@ class PlotWidget(QMainWindow):
 
 # uses the monthly payments formula to computer the amount needed to pay per month
 # formula M = [Po * r * (1 + r)^n] / [(1 + r)^n - 1]
-def determine_mthly_pymnt(principal, interest, num_payments):
+# if start is not zero the loan will accrue interest that is not being paid off yet
+def determine_mthly_pymnt(principal, interest, num_payments, start):
+    new_principal = principal * ((1 + interest) ** start)
+    print(start, new_principal, principal)
     fvf = (1 + interest) ** num_payments
-    numerator = principal * interest * fvf
+    numerator = new_principal * interest * fvf
     denominator = fvf - 1
     return round(numerator / denominator, 2)
 
